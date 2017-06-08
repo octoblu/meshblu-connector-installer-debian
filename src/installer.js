@@ -1,6 +1,5 @@
 const fs = require("fs-extra")
 const Promise = require("bluebird")
-const writeFile = Promise.promisify(fs.writeFile)
 const glob = Promise.promisify(require("glob"))
 const parseTemplate = require("json-templates")
 const path = require("path")
@@ -15,7 +14,8 @@ class MeshbluConnectorInstaller {
     this.version = this.packageJSON.version
     this.debianPackageName = `${this.type}_${this.version}-1`
     this.deployPath = path.join(this.connectorPath, "deploy")
-    this.debianDeployPath = path.join(this.deployPath, this.debianPackageName)
+    this.deployInstallersPath = path.join(this.deployPath, "installers")
+    this.debianDeployPath = path.join(this.deployInstallersPath, this.debianPackageName)
     this.debianUsrLocalBinPath = "usr/local/bin"
     this.arch = this.getArch()
     this.templateData = {
@@ -42,6 +42,10 @@ class MeshbluConnectorInstaller {
       .then(() => {
         return this.buildPackage()
       })
+      .then(() => {
+        if (!this.debianDeployPath) return
+        return fs.remove(this.debianDeployPath)
+      })
   }
 
   copyPkg() {
@@ -56,7 +60,7 @@ class MeshbluConnectorInstaller {
   buildPackage() {
     this.spinner.text = "Building package"
     const options = {
-      cwd: this.deployPath,
+      cwd: this.deployInstallersPath,
     }
     return exec(`dpkg --build ${this.debianPackageName}`, options)
   }
