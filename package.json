@@ -1,0 +1,23 @@
+{
+  "name": "meshblu-connector-installer-debian",
+  "version": "1.0.0",
+  "description": "Build a debian installer for a meshblu connector",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/octoblu/meshblu-connector-installer-debian.git"
+  },
+  "keywords": [
+    "meshblu",
+    "meshblu-connector"
+  ],
+  "author": "Octoblu <npm@octoblu.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/octoblu/meshblu-connector-installer-debian/issues"
+  },
+  "homepage": "https://github.com/octoblu/meshblu-connector-installer-debian#readme"
+}
