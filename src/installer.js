@@ -12,12 +12,12 @@ class MeshbluConnectorInstaller {
     this.packageJSON = fs.readJsonSync(path.join(this.connectorPath, "package.json"))
     this.type = this.packageJSON.name
     this.version = this.packageJSON.version
-    this.debianPackageName = `${this.type}_${this.version}-1`
+    this.arch = this.getArch()
+    this.debianPackageName = `${this.type}_${this.version}-1-${this.arch}`
     this.deployPath = path.join(this.connectorPath, "deploy")
     this.deployInstallersPath = path.join(this.deployPath, "installers")
     this.debianDeployPath = path.join(this.deployInstallersPath, this.debianPackageName)
     this.debianUsrLocalBinPath = "usr/local/bin"
-    this.arch = this.getArch()
     this.templateData = {
       type: this.type,
       version: this.version,
