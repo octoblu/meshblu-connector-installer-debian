@@ -17,7 +17,7 @@ class MeshbluConnectorInstaller {
     this.deployPath = path.join(this.connectorPath, "deploy")
     this.deployInstallersPath = path.join(this.deployPath, "installers")
     this.debianDeployPath = path.join(this.deployInstallersPath, this.debianPackageName)
-    this.debianUsrLocalBinPath = "usr/local/bin"
+    this.debianConnectorPath = `usr/share/meshblu-connector-pm2/connectors/${this.type}`
     this.templateData = {
       type: this.type,
       version: this.version,
@@ -50,7 +50,7 @@ class MeshbluConnectorInstaller {
 
   copyPkg() {
     this.spinner.text = "Copying pkg assets"
-    const destination = path.join(this.debianDeployPath, this.debianUsrLocalBinPath)
+    const destination = path.join(this.debianDeployPath, this.debianConnectorPath)
     const source = path.join(this.deployPath, "bin")
     return fs.ensureDir(destination).then(() => {
       return fs.copy(source, destination)
