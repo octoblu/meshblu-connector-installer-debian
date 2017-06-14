@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 const dashdash = require("dashdash")
 const path = require("path")
-const util = require("util")
-const fs = require("fs")
 const chalk = require("chalk")
 const ora = require("ora")
-const { MeshbluConnectorInstaller } = require("./src/installer")
+const { MeshbluConnectorInstaller } = require("./lib/installer")
 
 const CLI_OPTIONS = [
   {
@@ -23,6 +21,14 @@ const CLI_OPTIONS = [
     type: "string",
     env: "MESHBLU_CONNECTOR_PATH",
     help: "Path to connector package.json and assets",
+    helpArg: "PATH",
+    default: ".",
+  },
+  {
+    names: ["destination-path"],
+    type: "string",
+    env: "MESHBLU_DESTINATION_PATH",
+    help: "Path for bin files to be placed in installer",
     helpArg: "PATH",
   },
 ]
@@ -45,14 +51,8 @@ class MeshbluConnectorInstallerDebianCommand {
       return {}
     }
 
-    if (!opts.connector_path) {
-      opts.connector_path = process.cwd()
-    }
-
-    opts.connector_path = path.resolve(opts.connector_path)
-
     if (opts.help) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true })}`)
+      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefaults: true })}`)
       process.exit(0)
     }
 
@@ -66,12 +66,12 @@ class MeshbluConnectorInstallerDebianCommand {
 
   async run() {
     const options = this.parseArgv({ argv: this.argv })
-    const { connector_path } = options
+    const { connector_path, destination_path } = options
     var errors = []
     if (!connector_path) errors.push(new Error("MeshbluConnectorInstallerDebianCommand requires --connector-path or MESHBLU_CONNETOR_PATH"))
 
     if (errors.length) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true })}`)
+      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefaults: true })}`)
       errors.forEach(error => {
         console.error(chalk.red(error.message))
       })
@@ -80,7 +80,7 @@ class MeshbluConnectorInstallerDebianCommand {
 
     const spinner = ora("Building package").start()
 
-    const installer = new MeshbluConnectorInstaller({ connectorPath: connector_path, spinner })
+    const installer = new MeshbluConnectorInstaller({ connectorPath: connector_path, destinationPath: destination_path, spinner })
     try {
       await installer.build()
     } catch (error) {
