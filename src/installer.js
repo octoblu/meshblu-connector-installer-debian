@@ -13,11 +13,12 @@ class MeshbluConnectorInstaller {
     this.type = this.packageJSON.name
     this.version = this.packageJSON.version
     this.arch = this.getArch()
+    this.target = this.getTarget()
     this.debianPackageName = `${this.type}_${this.version}-1-${this.arch}`
-    this.deployPath = path.join(this.connectorPath, "deploy")
+    this.deployPath = path.join(this.connectorPath, "deploy", this.target)
     this.deployInstallersPath = path.join(this.deployPath, "installers")
     this.debianDeployPath = path.join(this.deployInstallersPath, this.debianPackageName)
-    this.debianConnectorPath = `usr/share/meshblu-connector-pm2/connectors/${this.type}`
+    this.debianConnectorPath = `usr/share/meshblu-connectors/connectors/${this.type}`
     this.templateData = {
       type: this.type,
       version: this.version,
@@ -34,18 +35,24 @@ class MeshbluConnectorInstaller {
     return "unsupported"
   }
 
+  getTarget() {
+    let { arch, platform } = process
+    if (platform === "darwin") platform = "macos"
+    if (platform === "win32") platform = "win"
+    if (arch === "ia32") arch = "x86"
+    if (arch === "arm") arch = "armv7"
+
+    const nodeVersion = "8"
+    return `node${nodeVersion}-${platform}-${arch}`
+  }
+
   build() {
-    return this.copyTemplates()
-      .then(() => {
-        return this.copyPkg()
-      })
-      .then(() => {
-        return this.buildPackage()
-      })
-      .then(() => {
-        if (!this.debianDeployPath) return
-        return fs.remove(this.debianDeployPath)
-      })
+    return this.copyTemplates().then(() => this.copyPkg()).then(() => this.buildPackage()).then(() => this.cleanup())
+  }
+
+  cleanup() {
+    if (!this.debianDeployPath) return
+    return fs.remove(this.debianDeployPath)
   }
 
   copyPkg() {
