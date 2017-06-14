@@ -52,7 +52,7 @@ class MeshbluConnectorInstallerDebianCommand {
     }
 
     if (opts.help) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefaults: true })}`)
+      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
       process.exit(0)
     }
 
@@ -71,7 +71,7 @@ class MeshbluConnectorInstallerDebianCommand {
     if (!connector_path) errors.push(new Error("MeshbluConnectorInstallerDebianCommand requires --connector-path or MESHBLU_CONNETOR_PATH"))
 
     if (errors.length) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefaults: true })}`)
+      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
       errors.forEach(error => {
         console.error(chalk.red(error.message))
       })
@@ -80,7 +80,7 @@ class MeshbluConnectorInstallerDebianCommand {
 
     const spinner = ora("Building package").start()
 
-    const installer = new MeshbluConnectorInstaller({ connectorPath: connector_path, destinationPath: destination_path, spinner })
+    const installer = new MeshbluConnectorInstaller({ connectorPath: path.resolve(connector_path), destinationPath: destination_path, spinner })
     try {
       await installer.build()
     } catch (error) {
