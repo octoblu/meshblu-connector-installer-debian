@@ -1,0 +1,7 @@
+Package: meshblu-connector-installer-debian
+Version: 1.4.2
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Octoblu, Inc. <npm@octoblu.com>
+Description: Build a debian installer for a meshblu connector
