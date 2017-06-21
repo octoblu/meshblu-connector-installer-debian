@@ -161,9 +161,9 @@ object-path@^0.11.4:
   version "0.11.4"
   resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.11.4.tgz#370ae752fbf37de3ea70a861c23bba8915691949"
 
-octodash@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/octodash/-/octodash-1.0.4.tgz#d7a078aa1389d29db3193d44b128b6a97decc9aa"
+octodash@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/octodash/-/octodash-1.0.5.tgz#40c6fead840d5d59166e01369289a5979619364f"
   dependencies:
     chalk "^1.1.3"
     dashdash "^1.14.1"
