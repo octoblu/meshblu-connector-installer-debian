@@ -1,97 +1,57 @@
 #!/usr/bin/env node
-const dashdash = require("dashdash")
+
+const OctoDash = require("octodash")
 const path = require("path")
-const chalk = require("chalk")
 const ora = require("ora")
 const { MeshbluConnectorInstaller } = require("./lib/installer")
+const packageJSON = require("./package.json")
 
 const CLI_OPTIONS = [
   {
-    name: "version",
-    type: "bool",
-    help: "Print connector version and exit.",
-  },
-  {
-    names: ["help", "h"],
-    type: "bool",
-    help: "Print this help and exit.",
-  },
-  {
     names: ["connector-path"],
     type: "string",
+    required: true,
     env: "MESHBLU_CONNECTOR_PATH",
     help: "Path to connector package.json and assets",
     helpArg: "PATH",
     default: ".",
+    completionType: "file",
   },
   {
     names: ["destination-path"],
     type: "string",
+    required: true,
     env: "MESHBLU_DESTINATION_PATH",
     help: "Path for bin files to be placed in installer",
     helpArg: "PATH",
+    completionType: "file",
   },
 ]
 
 class MeshbluConnectorInstallerDebianCommand {
-  constructor(options) {
-    if (!options) options = {}
-    var { argv, cliOptions } = options
-    if (!cliOptions) cliOptions = CLI_OPTIONS
-    if (!argv) return this.die(new Error("MeshbluConnectorInstallerDebianCommand requires options.argv"))
-    this.argv = argv
-    this.cliOptions = cliOptions
-    this.parser = dashdash.createParser({ options: this.cliOptions })
-  }
-
-  parseArgv({ argv }) {
-    try {
-      var opts = this.parser.parse(argv)
-    } catch (e) {
-      return {}
-    }
-
-    if (opts.help) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
-      process.exit(0)
-    }
-
-    if (opts.version) {
-      console.log(this.packageJSON.version)
-      process.exit(0)
-    }
-
-    return opts
+  constructor({ argv, cliOptions = CLI_OPTIONS } = {}) {
+    this.octoDash = new OctoDash({
+      argv,
+      cliOptions,
+      name: packageJSON.name,
+      version: packageJSON.version,
+    })
   }
 
   async run() {
-    const options = this.parseArgv({ argv: this.argv })
-    const { connector_path, destination_path } = options
-    var errors = []
-    if (!connector_path) errors.push(new Error("MeshbluConnectorInstallerDebianCommand requires --connector-path or MESHBLU_CONNETOR_PATH"))
-
-    if (errors.length) {
-      console.log(`usage: meshblu-connector-installer-debian [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
-      errors.forEach(error => {
-        console.error(chalk.red(error.message))
-      })
-      process.exit(1)
-    }
-
+    const { connectorPath, destinationPath } = this.octoDash.parseOptions()
     const spinner = ora("Building package").start()
-
-    const installer = new MeshbluConnectorInstaller({ connectorPath: path.resolve(connector_path), destinationPath: destination_path, spinner })
+    const installer = new MeshbluConnectorInstaller({
+      connectorPath: path.resolve(connectorPath),
+      destinationPath: destinationPath,
+      spinner,
+    })
     try {
       await installer.build()
     } catch (error) {
       return spinner.fail(error.message)
     }
     spinner.succeed("Ship it!")
-  }
-
-  die(error) {
-    console.error("Meshblu Connector Installer Debian Command: error: %s", error.message)
-    process.exit(1)
   }
 }
 
