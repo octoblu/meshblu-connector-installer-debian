@@ -24,7 +24,6 @@ const CLI_OPTIONS = [
     env: "MESHBLU_DESTINATION_PATH",
     help: "Path for bin files to be placed in installer",
     helpArg: "PATH",
-    completionType: "file",
   },
 ]
 
@@ -38,7 +37,7 @@ class MeshbluConnectorInstallerDebianCommand {
     })
   }
 
-  async run() {
+  run() {
     const { connectorPath, destinationPath } = this.octoDash.parseOptions()
     const spinner = ora("Building package").start()
     const installer = new MeshbluConnectorInstaller({
@@ -46,16 +45,28 @@ class MeshbluConnectorInstallerDebianCommand {
       destinationPath: destinationPath,
       spinner,
     })
-    try {
-      await installer.build()
-    } catch (error) {
-      return spinner.fail(error.message)
-    }
-    spinner.succeed("Ship it!")
+    return installer
+      .build()
+      .then(() => {
+        spinner.succeed("Ship it!")
+      })
+      .catch(error => {
+        spinner.fail(error.message)
+        throw error
+      })
+  }
+
+  die(error) {
+    this.octoDash.die(error)
   }
 }
 
 const command = new MeshbluConnectorInstallerDebianCommand({ argv: process.argv })
-command.run().catch(error => {
-  console.error(error)
-})
+command
+  .run()
+  .catch(error => {
+    command.die(error)
+  })
+  .then(() => {
+    process.exit(0)
+  })
