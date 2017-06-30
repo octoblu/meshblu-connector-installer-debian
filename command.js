@@ -34,6 +34,14 @@ const CLI_OPTIONS = [
     default: path.join(__dirname, "key.gpg.enc"),
   },
   {
+    names: ["cert-password"],
+    type: "string",
+    required: true,
+    env: "MESHBLU_CONNECTOR_CERT_PASSWORD",
+    help: "Password to unlock .p12 certificate",
+    helpArg: "PASSWORD",
+  },
+  {
     names: ["encryption-password"],
     type: "string",
     env: "MESHBLU_CONNECTOR_ENCRYPTION_PASSWORD",
@@ -53,12 +61,13 @@ class MeshbluConnectorInstallerDebianCommand {
   }
 
   run() {
-    const { connectorPath, destinationPath, encryptionPassword, encryptedGpgKeyPath } = this.octoDash.parseOptions()
+    const { connectorPath, certPassword, destinationPath, encryptionPassword, encryptedGpgKeyPath } = this.octoDash.parseOptions()
     const spinner = ora("Building package").start()
     const installer = new MeshbluConnectorInstaller({
       connectorPath: path.resolve(connectorPath),
       destinationPath: destinationPath,
       spinner,
+      certPassword,
       encryptionPassword,
       encryptedGpgKeyPath,
     })
