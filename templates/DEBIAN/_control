@@ -4,4 +4,6 @@ Section: utils
 Priority: optional
 Architecture: {{ arch }}
 Maintainer: Octoblu, Inc. <npm@octoblu.com>
+Homepage: {{ homepage }}
 Description: {{ description }}
+License: {{ license }}
