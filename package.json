@@ -1,6 +1,6 @@
 {
   "name": "meshblu-connector-installer-debian",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Build a debian installer for a meshblu connector",
   "main": "index.js",
   "bin": {
