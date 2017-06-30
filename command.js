@@ -39,7 +39,7 @@ const CLI_OPTIONS = [
     env: "MESHBLU_CONNECTOR_GPG_KEY_ID",
     help: "GPG key id or name",
     helpArg: "KEYID",
-    default: "Octoblu, Inc. <npm@octoblu.com>",
+    default: "445C1350",
   },
   {
     names: ["cert-password"],
