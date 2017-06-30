@@ -1,6 +1,6 @@
 {
   "name": "meshblu-connector-installer-debian",
-  "version": "1.4.10",
+  "version": "1.5.0",
   "description": "Build a debian installer for a meshblu connector",
   "main": "index.js",
   "bin": {
@@ -31,6 +31,7 @@
     "glob": "^7.1.2",
     "json-templates": "^1.8.0",
     "octodash": "^1.2.5",
-    "ora": "^1.3.0"
+    "ora": "^1.3.0",
+    "tmp": "^0.0.31"
   }
 }

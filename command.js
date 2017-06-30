@@ -24,6 +24,22 @@ const CLI_OPTIONS = [
     help: "Path for bin files to be placed in installer",
     helpArg: "PATH",
   },
+  {
+    names: ["encrypted-gpg-key-path"],
+    type: "string",
+    env: "MESHBLU_CONNECTOR_ENCRYPTED_GPG_KEY_PATH",
+    help: "Path to encrypted gpg key",
+    helpArg: "PATH",
+    completionType: "file",
+    default: path.join(__dirname, "key.gpg.enc"),
+  },
+  {
+    names: ["encryption-password"],
+    type: "string",
+    env: "MESHBLU_CONNECTOR_ENCRYPTION_PASSWORD",
+    help: "Password to decrypt GPG key",
+    helpArg: "PASSWORD",
+  },
 ]
 
 class MeshbluConnectorInstallerDebianCommand {
@@ -37,12 +53,14 @@ class MeshbluConnectorInstallerDebianCommand {
   }
 
   run() {
-    const { connectorPath, destinationPath } = this.octoDash.parseOptions()
+    const { connectorPath, destinationPath, encryptionPassword, encryptedGpgKeyPath } = this.octoDash.parseOptions()
     const spinner = ora("Building package").start()
     const installer = new MeshbluConnectorInstaller({
       connectorPath: path.resolve(connectorPath),
       destinationPath: destinationPath,
       spinner,
+      encryptionPassword,
+      encryptedGpgKeyPath,
     })
     return installer
       .build()
