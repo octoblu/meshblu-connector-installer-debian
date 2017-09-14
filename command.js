@@ -8,6 +8,15 @@ const packageJSON = require("./package.json")
 
 const CLI_OPTIONS = [
   {
+    names: ["arch"],
+    type: "string",
+    required: true,
+    env: "MESHBLU_CONNECTOR_ARCH",
+    help: "Architecture override",
+    helpArg: "ARCH",
+    default: process.arch,
+  },
+  {
     names: ["connector-path"],
     type: "string",
     required: true,
@@ -68,9 +77,10 @@ class MeshbluConnectorInstallerDebianCommand {
   }
 
   run() {
-    const { connectorPath, certPassword, destinationPath, encryptionPassword, encryptedGpgKeyPath, gpgKeyId } = this.octoDash.parseOptions()
+    const { arch, connectorPath, certPassword, destinationPath, encryptionPassword, encryptedGpgKeyPath, gpgKeyId } = this.octoDash.parseOptions()
     const spinner = ora("Building package").start()
     const installer = new MeshbluConnectorInstaller({
+      arch, 
       connectorPath: path.resolve(connectorPath),
       destinationPath: destinationPath,
       spinner,
